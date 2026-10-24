@@ -1,0 +1,6 @@
+# Сборка
+bin/
+obj/
+publish/
+*.user
+.vs/

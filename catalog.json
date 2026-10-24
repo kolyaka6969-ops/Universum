@@ -1,0 +1,27 @@
+[
+  {
+    "id": "volumix",
+    "name": "Volumix",
+    "tagline": "Микшер громкости приложений",
+    "description": "Громкость каждого приложения отдельно: горячие клавиши, трей, OSD, тексты песен и голосовые команды на русском.",
+    "repo": "kolyaka6969-ops/Volumix",
+    "appId": "{8F3C2A51-7B4E-4C1D-9E2A-5D6F7A8B9C10}",
+    "exe": "Volumix.exe",
+    "assetPattern": "^Volumix-Setup-[\\d.]+\\.exe$",
+    "icon": "src/Volumix/Assets/app.ico",
+    "accent": "#2DD4BF"
+  },
+  {
+    "id": "orbit",
+    "name": "Orbit",
+    "tagline": "Конвертер файлов с круговым меню",
+    "description": "Перетащите файл и зажмите Shift, Ctrl или Alt — картинки, видео и PDF конвертируются прямо из кругового меню.",
+    "repo": "kolyaka6969-ops/Orbit",
+    "appId": "{5E0C2B7A-3A41-4C59-9D0B-6E2E0B7C9A11}",
+    "exe": "Orbit.exe",
+    "assetPattern": "^Orbit-[\\d.]+-Setup-x64\\.exe$",
+    "win10AssetPattern": "^Orbit-[\\d.]+-Win10-22H2-Setup-x64\\.exe$",
+    "icon": "src/Orbit/Assets/Orbit.png",
+    "accent": "#6D7CFF"
+  }
+]
