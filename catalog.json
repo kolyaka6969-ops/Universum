@@ -8,6 +8,7 @@
     "appId": "{8F3C2A51-7B4E-4C1D-9E2A-5D6F7A8B9C10}",
     "exe": "Volumix.exe",
     "assetPattern": "^Volumix-Setup-[\\d.]+\\.exe$",
+    "win10AssetPattern": "^Volumix-Setup-[\\d.]+-Win10\\.exe$",
     "icon": "src/Volumix/Assets/app.ico",
     "accent": "#2DD4BF"
   },
