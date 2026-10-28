@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 using Universum.Core;
 
@@ -15,8 +16,78 @@ public sealed class MainViewModel : ObservableObject
         RefreshCommand = new RelayCommand(async () => await RefreshAsync(), () => !IsRefreshing);
         UpdateAllCommand = new RelayCommand(async () => await UpdateAllAsync(), () => HasUpdates && !_all.Any(a => a.IsBusy));
         SortCommand = new RelayCommand(p => SortMode = int.Parse((string)p!));
+        SelfUpdateCommand = new RelayCommand(async () => await ApplySelfUpdateAsync(), () => _selfUpdate != null && !IsSelfUpdating);
         Regroup();
     }
+
+    // ---------------------------------------------------------------- обновление самого Universum
+
+    (ReleaseInfo Release, ReleaseAsset Asset)? _selfUpdate;
+
+    public ICommand SelfUpdateCommand { get; }
+    public string AppVersionLabel => $"v{SelfUpdate.CurrentVersion}";
+    public bool HasSelfUpdate => _selfUpdate != null;
+    public string SelfUpdateTitle => _selfUpdate is { } u ? $"Доступен Universum {u.Release.Version}" : "";
+    public string SelfUpdateSubtitle => _selfUpdate is { } u
+        ? $"Сейчас v{SelfUpdate.CurrentVersion} · {FormatSize(u.Asset.Size)} · хаб перезапустится сам"
+        : "";
+
+    bool _isSelfUpdating;
+    public bool IsSelfUpdating { get => _isSelfUpdating; private set => Set(ref _isSelfUpdating, value); }
+
+    double _selfUpdateProgress;
+    public double SelfUpdateProgress { get => _selfUpdateProgress; private set => Set(ref _selfUpdateProgress, value); }
+
+    string _selfUpdateStatus = "";
+    public string SelfUpdateStatus { get => _selfUpdateStatus; private set => Set(ref _selfUpdateStatus, value); }
+
+    async Task CheckSelfUpdateAsync()
+    {
+        try
+        {
+            _selfUpdate = await SelfUpdate.CheckAsync(_github, CancellationToken.None);
+        }
+        catch
+        {
+            // без сети — проверим в следующий раз
+        }
+        OnPropertyChanged(nameof(HasSelfUpdate));
+        OnPropertyChanged(nameof(SelfUpdateTitle));
+        OnPropertyChanged(nameof(SelfUpdateSubtitle));
+        CommandManager.InvalidateRequerySuggested();
+    }
+
+    async Task ApplySelfUpdateAsync()
+    {
+        if (_selfUpdate is not { } update || IsSelfUpdating) return;
+        if (_all.Any(a => a.IsBusy))
+        {
+            MessageBox.Show("Дождитесь окончания установки приложений — затем Universum обновится.", "Universum",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        IsSelfUpdating = true;
+        SelfUpdateStatus = "Загрузка…";
+        try
+        {
+            var progress = new Progress<(long Done, long Total)>(p =>
+            {
+                SelfUpdateProgress = p.Total > 0 ? p.Done * 100.0 / p.Total : 0;
+                SelfUpdateStatus = p.Total > 0 ? $"Загрузка · {FormatSize(p.Done)} из {FormatSize(p.Total)}" : $"Загрузка · {FormatSize(p.Done)}";
+            });
+            await SelfUpdate.ApplyAsync(update.Release, update.Asset, progress, CancellationToken.None);
+            Application.Current.Shutdown();
+        }
+        catch (Exception ex)
+        {
+            IsSelfUpdating = false;
+            var answer = MessageBox.Show($"Не удалось обновить Universum: {ex.Message}\n\nОткрыть страницу релиза, чтобы скачать вручную?",
+                "Universum", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (answer == MessageBoxResult.Yes) InstallService.OpenUrl(update.Release.HtmlUrl);
+        }
+    }
+
+    static string FormatSize(long bytes) => bytes >= 1024 * 1024 ? $"{bytes / 1024.0 / 1024.0:0.#} МБ" : $"{bytes / 1024.0:0} КБ";
 
     public ObservableCollection<AppItem> InstalledApps { get; } = [];
     public ObservableCollection<AppItem> AvailableApps { get; } = [];
@@ -57,6 +128,7 @@ public sealed class MainViewModel : ObservableObject
 
         var failed = 0;
         var cached = 0;
+        var self = CheckSelfUpdateAsync();
         await Task.WhenAll(_all.Select(async app =>
         {
             try
@@ -72,6 +144,7 @@ public sealed class MainViewModel : ObservableObject
         }));
 
         _ = Task.WhenAll(_all.Select(a => a.LoadIconAsync()));
+        await self;
 
         var time = DateTime.Now.ToString("HH:mm");
         Footer = failed + cached == 0

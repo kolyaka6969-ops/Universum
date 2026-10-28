@@ -15,6 +15,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = _vm;
         Loaded += async (_, _) => await _vm.RefreshAsync();
+        _ = SelfUpdate.CleanupAsync();
         Activated += (_, _) => _vm.RefreshInstalledOnly();
         StateChanged += (_, _) => UpdateMaximized();
     }
