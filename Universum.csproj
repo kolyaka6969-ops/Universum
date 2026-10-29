@@ -9,9 +9,9 @@
     <AssemblyName>Universum</AssemblyName>
     <RootNamespace>Universum</RootNamespace>
     <ApplicationIcon>Assets\universum.ico</ApplicationIcon>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Product>Universum</Product>
-    <Description>Хаб приложений: установка и обновление Volumix, Orbit и других.</Description>
+    <Description>Хаб приложений: установка и обновление OmniFlex, Orbit и других.</Description>
   </PropertyGroup>
 
   <ItemGroup>

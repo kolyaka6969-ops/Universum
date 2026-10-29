@@ -1,16 +1,15 @@
 [
   {
-    "id": "volumix",
-    "name": "Volumix",
-    "tagline": "Микшер громкости приложений",
-    "description": "Громкость каждого приложения отдельно: горячие клавиши, трей, OSD, тексты песен и голосовые команды на русском.",
-    "repo": "kolyaka6969-ops/Volumix",
-    "appId": "{8F3C2A51-7B4E-4C1D-9E2A-5D6F7A8B9C10}",
-    "exe": "Volumix.exe",
-    "assetPattern": "^Volumix-Setup-[\\d.]+\\.exe$",
-    "win10AssetPattern": "^Volumix-Setup-[\\d.]+-Win10\\.exe$",
-    "icon": "src/Volumix/Assets/app.ico",
-    "accent": "#2DD4BF"
+    "id": "omniflex",
+    "name": "OmniFlex",
+    "tagline": "Остров вверху экрана и микшер громкости",
+    "description": "Остров с плеером, громкостью, скриншотами, текстом с экрана, лаунчером, напоминаниями и ИИ, плюс микшер громкости каждого приложения с горячими клавишами и трей.",
+    "repo": "kolyaka6969-ops/OmniFlex",
+    "appId": "{3B7E9C14-6A2D-4F8B-A1C5-0E9D7F2B4A61}",
+    "exe": "OmniFlex.exe",
+    "assetPattern": "^OmniFlex-Setup-[\\d.]+\\.exe$",
+    "icon": "res/app.ico",
+    "accent": "#FF9F0A"
   },
   {
     "id": "orbit",
